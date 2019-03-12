@@ -3,16 +3,18 @@ import string
 import crypt
 import itertools
 
-if len(sys.argv) != 3:
+# check for correct usage from the command line
+if len(sys.argv) != 2:
     sys.exit("Usage: python crack.py *hashed password to match*")
 
-hash = argv[1]
+# collect the hashed password to be matched
+hash = sys.argv[1]
 
 # remove username from string
 colon_index = hash.find(":")
-#find the salt used as part of crypt.crypt
+# find the salt used as part of crypt.crypt
 salt = hash[colon_index + 1:colon_index + 3]
-#the hashed password including salt, to be used for comparison
+# the hashed password including salt, to be used for comparison
 hash_and_salt = hash[colon_index + 1:]
 
 # list of uppercase and lowercase english letter alphabet
@@ -24,5 +26,5 @@ for pwdCheck in range(0, len(dictionary)+1):
     for subset in itertools.combinations(dictionary, pwdCheck):
         pwdString = ''.join(subset)
         if crypt.crypt(pwdString, salt) == hash_and_salt:
-            #print("Found!")
+            # print("Found!")
             sys.exit(pwdString)
