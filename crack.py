@@ -1,53 +1,26 @@
 from sys import argv
 import string
 import crypt
+import itertools
 
 hash = argv[1]
 
 # remove username from string
 colon_index = hash.find(":")
+#find the salt used as part of crypt.crypt
 salt = hash[colon_index + 1:colon_index + 3]
-hash_nosalt = hash[colon_index + 3:]
+#the hashed password including salt, to be used for comparison
+hash_and_salt = hash[colon_index + 1:]
 
 # list of uppercase and lowercase english letter alphabet
-lowercase_dict = list(string.ascii_lowercase)
-uppercase_dict = list(string.ascii_uppercase)
+dictionary = list(string.ascii_lowercase) + list(string.ascii_uppercase)
 
-# the final string with numbers, etc... removed
-final_hash = ""
-
-for char in hash_nosalt:
-    if char not in lowercase_dict and char not in uppercase_dict:
-        continue
-    else:
-        final_hash = final_hash + char
-
-for letter, position in enumerate(lowercase_dict, uppercase_dict):
-    test1 = lowercase_dict[letter]
-    if test1 == crypt.crypt(hash, salt):
-        print("found!")
-        break
-
-    for letter in range(len(lowercase_dict)):
-        test2 = test1 + lowercase_dict[letter]
-        if test2 == crypt.crypt(hash, salt):
-            print("found!")
-            break
-
-        for letter in range(len(lowercase_dict)):
-            test3 = test2 + lowercase_dict[letter]
-            if test3 == crypt.crypt(hash, salt):
-                print("found!")
+# using itertools and itertools.combinations to create every possible letter combination
+# check for success in finding password
+for pwdCheck in range(0, len(dictionary)+1):
+    for subset in itertools.combinations(dictionary, pwdCheck):
+            pwdString = ''.join(subset)
+            print(crypt.crypt(pwdString, salt))
+            if crypt.crypt(pwdString, salt) == hash_and_salt:
+                print("Found!")
                 break
-
-            for letter in range(len(lowercase_dict)):
-                test4 = test3 + lowercase_dict[letter]
-                if test4 == crypt.crypt(hash, salt):
-                    print("found!")
-                    break
-
-                for letter in range(len(lowercase_dict)):
-                    test5 = test4 + lowercase_dict[letter]
-                    if test5 == crypt.crypt(hash, salt):
-                        print("found!")
-                        break
