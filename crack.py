@@ -1,7 +1,10 @@
-from sys import argv
+import sys
 import string
 import crypt
 import itertools
+
+if len(sys.argv) != 3:
+    sys.exit("Usage: python crack.py *hashed password to match*")
 
 hash = argv[1]
 
@@ -19,8 +22,7 @@ dictionary = list(string.ascii_lowercase) + list(string.ascii_uppercase)
 # check for success in finding password
 for pwdCheck in range(0, len(dictionary)+1):
     for subset in itertools.combinations(dictionary, pwdCheck):
-            pwdString = ''.join(subset)
-            print(crypt.crypt(pwdString, salt))
-            if crypt.crypt(pwdString, salt) == hash_and_salt:
-                print("Found!")
-                break
+        pwdString = ''.join(subset)
+        if crypt.crypt(pwdString, salt) == hash_and_salt:
+            #print("Found!")
+            sys.exit(pwdString)
